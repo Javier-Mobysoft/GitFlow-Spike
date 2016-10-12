@@ -1,0 +1,6 @@
+gitflow-spike:
+  build: /vagrant
+  ports:
+    - 8080:8080
+    - 8000:8000
+
