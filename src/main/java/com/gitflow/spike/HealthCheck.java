@@ -13,7 +13,7 @@ public class HealthCheck {
     @RequestMapping("/healthcheck")
     public HealthCheckBean check() {
         HealthCheckBean healthCheckBean = new HealthCheckBean();
-        healthCheckBean.setStatus("OK");
+        healthCheckBean.setStatus("OK.1.1");
         return healthCheckBean;
     }
 }
