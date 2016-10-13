@@ -1,6 +1,8 @@
 gitflow-spike:
-  build: /vagrant
+  image: rossbachp/apache-tomcat8
   ports:
     - 8080:8080
-    - 8000:8000
+    - 8009:8009
+  environment:
+    TOMCAT_PASS: password
 

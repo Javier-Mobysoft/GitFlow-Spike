@@ -10,28 +10,74 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # fix "stdin: is not a tty" error
   config.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"
 
-  config.vm.define "support" do |support|
-    support.vm.provider "virtualbox" do |vb|
+  config.vm.define "dev" do |dev|
+    dev.vm.provider "virtualbox" do |vb|
       # Customize the amount of memory on the VM:
-      vb.memory = "1024"
+      vb.memory = "512"
       vb.cpus = 1
     end
 
-    support.vm.network "private_network", ip: "192.168.33.11"
+    dev.vm.network "private_network", ip: "192.168.33.200"
 
-    support.vm.synced_folder File.expand_path("~/.m2"), "/home/vagrant/.m2"
-    support.vm.synced_folder File.expand_path("./"), "/home/vagrant/"
+    #dev.vm.synced_folder File.expand_path("~/.m2"), "/home/vagrant/.m2"
+    #dev.vm.synced_folder File.expand_path("./"), "/home/vagrant/"
 
-    support.vm.provision :shell, path: "vagrant/provision.sh"
+    #dev.vm.provision :shell, path: "vagrant/provision.sh"
 
-    support.vm.provision :shell, path: "vagrant/build.sh", privileged: false
+    #dev.vm.provision :shell, path: "vagrant/build.sh", privileged: false
 
-    support.vm.provision :docker
-    support.vm.provision :docker_compose, yml: "/vagrant/docker.yml", rebuild: true
+    dev.vm.provision :docker
+    dev.vm.provision :docker_compose, yml: "/vagrant/docker.yml", rebuild: true
 
 
 
   end
+
+    config.vm.define "stage" do |stage|
+      stage.vm.provider "virtualbox" do |vb|
+        # Customize the amount of memory on the VM:
+        vb.memory = "512"
+        vb.cpus = 1
+      end
+
+      stage.vm.network "private_network", ip: "192.168.33.201"
+
+      #stage.vm.synced_folder File.expand_path("~/.m2"), "/home/vagrant/.m2"
+      #stage.vm.synced_folder File.expand_path("./"), "/home/vagrant/"
+
+      #stage.vm.provision :shell, path: "vagrant/provision.sh"
+
+      #stage.vm.provision :shell, path: "vagrant/build.sh", privileged: false
+
+      stage.vm.provision :docker
+      stage.vm.provision :docker_compose, yml: "/vagrant/docker.yml", rebuild: true
+
+
+
+    end
+
+     config.vm.define "prod" do |prod|
+          prod.vm.provider "virtualbox" do |vb|
+            # Customize the amount of memory on the VM:
+            vb.memory = "512"
+            vb.cpus = 1
+          end
+
+          prod.vm.network "private_network", ip: "192.168.33.202"
+
+          #prod.vm.synced_folder File.expand_path("~/.m2"), "/home/vagrant/.m2"
+          #prod.vm.synced_folder File.expand_path("./"), "/home/vagrant/"
+
+          #prod.vm.provision :shell, path: "vagrant/provision.sh"
+
+          #prod.vm.provision :shell, path: "vagrant/build.sh", privileged: false
+
+          prod.vm.provision :docker
+          prod.vm.provision :docker_compose, yml: "/vagrant/docker.yml", rebuild: true
+
+
+
+        end
 
 
 
