@@ -3,9 +3,6 @@ package com.gitflow.spike;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Arrays;
-import java.util.List;
-
 /**
  * Created by Javier on 12/10/2016.
  */
@@ -17,7 +14,7 @@ public class HealthCheck {
     public HealthCheckBean check() {
         HealthCheckBean healthCheckBean = new HealthCheckBean();
         healthCheckBean.setStatus("OK");
-        healthCheckBean.setVersion("1.6");
+        healthCheckBean.setVersion("1.5.1");
         return healthCheckBean;
     }
 
