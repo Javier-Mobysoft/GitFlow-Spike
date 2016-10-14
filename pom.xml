@@ -1,21 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.gitflow.spike</groupId>
 	<artifactId>demo</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.4-SNAPSHOT</version>
 	<packaging>war</packaging>
 
 	<name>demo</name>
 	<description>Demo project for Spring Boot</description>
 
+    <scm>
+        <connection>scm:git:https://github.com/Javier-Mobysoft/GitFlow-Spike.git</connection>
+        <developerConnection>scm:git:https://github.com/Javier-Mobysoft/GitFlow-Spike.git</developerConnection>
+        <url>https://github.com/Javier-Mobysoft/GitFlow-Spike</url>
+      <tag>demo-0.0.2</tag>
+  </scm>
+
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>1.4.1.RELEASE</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 
 	<properties>
@@ -57,5 +63,21 @@
 		</plugins>
 	</build>
 
+	<distributionManagement>
+		<snapshotRepository>
+			<uniqueVersion>true</uniqueVersion>
+			<id>snapshotRepo</id>
+			<name>Local Nexus</name>
+			<url>http://192.168.33.100:8081/nexus/content/repositories/snapshots/</url>
+			<layout>default</layout>
+		</snapshotRepository>
+        <repository>
+            <uniqueVersion>false</uniqueVersion>
+            <id>releaseRepo</id>
+            <name>Local Nexus</name>
+            <url>scp://repo/maven2</url>
+            <layout>http://192.168.33.100:8081/nexus/content/repositories/releases</layout>
+        </repository>
+	</distributionManagement>
 
 </project>
