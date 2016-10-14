@@ -80,7 +80,7 @@
             <uniqueVersion>false</uniqueVersion>
             <id>releaseRepo</id>
             <name>Release Local Nexus</name>
-            <url>scp://repo/maven2</url>
+            <url>http://192.168.33.100:8081/nexus/content/repositories/releases</url>
             <layout>http://192.168.33.100:8081/nexus/content/repositories/releases</layout>
         </repository>
 	</distributionManagement>
