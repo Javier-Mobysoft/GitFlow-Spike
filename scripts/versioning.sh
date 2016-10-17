@@ -1,3 +1,3 @@
 #!/bin/bash
 
-mvn versions:set -DnewVersion=${BRANCH_ENV}-${GO_PIPELINE_COUNTER}
+mvn versions:set -DnewVersion=${BRANCH_ENV}${GO_PIPELINE_COUNTER}
