@@ -17,7 +17,7 @@ public class HealthCheck {
     public HealthCheckBean check() {
         HealthCheckBean healthCheckBean = new HealthCheckBean();
         healthCheckBean.setStatus("OK");
-        healthCheckBean.setVersion("1.5.1");
+        healthCheckBean.setVersion("1.7");
         return healthCheckBean;
     }
 
