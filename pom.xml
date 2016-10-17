@@ -29,6 +29,7 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
 		<warFile>${project.build.directory}/${project.build.finalName}.war</warFile>
+		<project.scm.id>gitHub-Mobysoft</project.scm.id>
 	</properties>
 
 	<dependencies>
