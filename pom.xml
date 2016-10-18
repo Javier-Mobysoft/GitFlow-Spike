@@ -94,9 +94,6 @@
 
 		</plugins>
 	</build>
-<profiles>
-	<profile>
-		<id>releases</id>
 		<distributionManagement>
 			<snapshotRepository>
 				<uniqueVersion>true</uniqueVersion>
@@ -113,6 +110,4 @@
 				<layout>http://192.168.33.100:8081/nexus/content/repositories/releases</layout>
 			</repository>
 		</distributionManagement>
-	</profile>
-	</profiles>
 </project>
