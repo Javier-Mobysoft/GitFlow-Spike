@@ -4,7 +4,7 @@
 
 	<groupId>com.gitflow.spike</groupId>
 	<artifactId>demo</artifactId>
-	<version>0.0.8-SNAPSHOT</version>
+	<version>0.0.1-SNAPSHOT</version>
 	<packaging>war</packaging>
 
 	<name>demo</name>
@@ -94,21 +94,44 @@
 			</plugin>
 
 		</plugins>
+
 	</build>
-		<distributionManagement>
-			<snapshotRepository>
-				<uniqueVersion>true</uniqueVersion>
-				<id>snapshotRepo</id>
-				<name>Snapshot Local Nexus</name>
-				<url>http://192.168.33.100:8081/nexus/content/repositories/snapshots</url>
-				<layout>http://192.168.33.100:8081/nexus/content/repositories/snapshots</layout>
-			</snapshotRepository>
-			<repository>
-				<uniqueVersion>false</uniqueVersion>
-				<id>releaseRepo</id>
-				<name>Release Local Nexus</name>
-				<url>http://192.168.33.100:8081/nexus/content/repositories/releases</url>
-				<layout>http://192.168.33.100:8081/nexus/content/repositories/releases</layout>
-			</repository>
-		</distributionManagement>
+
+	<profiles>
+		<profile>
+			<id>releases</id>
+			<distributionManagement>
+				<snapshotRepository>
+					<uniqueVersion>true</uniqueVersion>
+					<id>snapshotRepo</id>
+					<name>Snapshot Local Nexus</name>
+					<url>http://192.168.33.100:8081/nexus/content/repositories/snapshots</url>
+					<layout>http://192.168.33.100:8081/nexus/content/repositories/snapshots</layout>
+				</snapshotRepository>
+				<repository>
+					<uniqueVersion>false</uniqueVersion>
+					<id>releaseRepo</id>
+					<name>Release Local Nexus</name>
+					<url>http://192.168.33.100:8081/nexus/content/repositories/releases</url>
+					<layout>http://192.168.33.100:8081/nexus/content/repositories/releases</layout>
+				</repository>
+			</distributionManagement>
+		</profile>
+		<profile>
+			<id>snapshots</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<distributionManagement>
+				<repository>
+					<uniqueVersion>true</uniqueVersion>
+					<id>snapshotRepo</id>
+					<name>Snapshot Local Nexus</name>
+					<url>http://192.168.33.100:8081/nexus/content/repositories/snapshots</url>
+					<layout>http://192.168.33.100:8081/nexus/content/repositories/snapshots</layout>
+				</repository>
+			</distributionManagement>
+		</profile>
+	</profiles>
+
 </project>
