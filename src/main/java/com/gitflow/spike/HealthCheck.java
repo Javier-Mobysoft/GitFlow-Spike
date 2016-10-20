@@ -39,15 +39,6 @@ public class HealthCheck {
     }
 
     private String getVersion()  {
-        if(prop==null) {
-            InputStream resourceAsStream = this.getClass().getResourceAsStream("/META-INF/maven/com.gitflow.spike/demo/pom.properties");
-            Properties prop = new Properties();
-            try {
-                prop.load(resourceAsStream);
-            } catch (IOException e) {
-                return "";
-            }
-        }
-        return prop.getProperty("version");
+        return this.getClass().getPackage().getImplementationVendor();
     }
 }
