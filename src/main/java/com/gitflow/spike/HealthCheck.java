@@ -3,8 +3,11 @@ package com.gitflow.spike;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.jar.Attributes;
+import java.util.jar.Manifest;
 
 /**
  * Created by Javier on 12/10/2016.
@@ -17,7 +20,7 @@ public class HealthCheck {
     public HealthCheckBean check() {
         HealthCheckBean healthCheckBean = new HealthCheckBean();
         healthCheckBean.setStatus("OK");
-        healthCheckBean.setVersion("2.0.2.1");
+        healthCheckBean.setVersion(getVersion());
         return healthCheckBean;
     }
 
@@ -30,5 +33,15 @@ public class HealthCheck {
         User user = new User();
         user.setName(name);
         return user;
+    }
+
+    private String getVersion()  {
+        try {
+            return new Manifest(HealthCheck.class.getResourceAsStream("/META-INF/manifest.mf"))
+                    .getMainAttributes()
+                    .get(Attributes.Name.IMPLEMENTATION_VERSION).toString();
+        } catch (IOException e) {
+            return "";
+        }
     }
 }
