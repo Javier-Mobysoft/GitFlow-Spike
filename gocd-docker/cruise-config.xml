@@ -115,12 +115,18 @@
                 <arg>cp target/demo-*-sources.jar target/demo-sources.jar</arg>
                 <runif status="passed" />
               </exec>
+              <exec command="/bin/bash">
+                <arg>-c</arg>
+                <arg>echo ${GO_PIPELINE_LABEL} &gt; incremental_version.txt</arg>
+                <runif status="passed" />
+              </exec>
             </tasks>
             <artifacts>
               <artifact src="target/demo.war" />
               <artifact src="pom.xml" />
               <artifact src="target/demo-javadoc.jar" />
               <artifact src="target/demo-sources.jar" />
+              <artifact src="incremental_version.txt" />
             </artifacts>
           </job>
         </jobs>
