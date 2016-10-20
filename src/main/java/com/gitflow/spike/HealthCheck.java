@@ -37,7 +37,10 @@ public class HealthCheck {
 
     private String getVersion()  {
         try {
-            return new Manifest(HealthCheck.class.getResourceAsStream("/META-INF/manifest.mf"))
+            Manifest manifest = new Manifest(HealthCheck.class.getResourceAsStream("/META-INF/MANIFEST.MF"));
+            if(manifest==null) return "";
+
+            return manifest
                     .getMainAttributes()
                     .get(Attributes.Name.IMPLEMENTATION_VERSION).toString();
         } catch (IOException e) {
