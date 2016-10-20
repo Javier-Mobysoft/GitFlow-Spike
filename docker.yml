@@ -25,7 +25,7 @@ go_server:
     - 8153:8153
     - 8154:8154
   volumes:
-    - /vagrant/gocd-docker/cruise-config.xml:/etc/go/cruise-config.xml
+    - /vagrant/docker-conf/cruise-config.xml:/etc/go/cruise-config.xml
 go_agent:
   image: ashwanthkumar/gocd-agent-jdk-aws-maven-sbt:latest
   environment:
@@ -35,7 +35,7 @@ go_agent:
       AGENT_GUID: 0abc9a01-f56d-4191-bc71-1e0d3ea0664f
       AGENT_RESOURCES: Java
   volumes:
-     - /vagrant/gocd-docker/settings.xml:/var/go/.m2/settings.xml
+     - /vagrant/docker-conf/settings.xml:/var/go/.m2/settings.xml
   links:
   - go_server
 nexus:
@@ -43,5 +43,5 @@ nexus:
    ports:
      - 8091:8081
    volumes:
-     - /vagrant/gocd-docker/sonatype-work/conf:/sonatype-work/conf
+     - /vagrant/docker-conf/sonatype-work/conf:/sonatype-work/conf
 
