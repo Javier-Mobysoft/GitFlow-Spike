@@ -3,11 +3,8 @@ package com.gitflow.spike;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Properties;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
@@ -17,13 +14,12 @@ import java.util.jar.Manifest;
 @RestController
 public class HealthCheck {
 
-    private Properties prop;
 
     @RequestMapping("/healthcheck")
     public HealthCheckBean check() {
         HealthCheckBean healthCheckBean = new HealthCheckBean();
         healthCheckBean.setStatus("OK");
-        healthCheckBean.setVersion(getVersion());
+        healthCheckBean.setVersion("2.0.3");
         return healthCheckBean;
     }
 
@@ -36,9 +32,5 @@ public class HealthCheck {
         User user = new User();
         user.setName(name);
         return user;
-    }
-
-    private String getVersion()  {
-        return this.getClass().getPackage().getImplementationVersion();
     }
 }
