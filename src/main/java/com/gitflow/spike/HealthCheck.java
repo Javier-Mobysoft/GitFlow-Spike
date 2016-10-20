@@ -39,6 +39,6 @@ public class HealthCheck {
     }
 
     private String getVersion()  {
-        return this.getClass().getPackage().getImplementationVendor();
+        return this.getClass().getPackage().getImplementationVersion();
     }
 }
