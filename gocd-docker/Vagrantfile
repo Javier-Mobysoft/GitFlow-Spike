@@ -10,17 +10,20 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # fix "stdin: is not a tty" error
   config.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"
 
-  config.vm.define "dev" do |dev|
-    dev.vm.provider "virtualbox" do |vb|
+  config.vm.define "support" do |support|
+    support.vm.provider "virtualbox" do |vb|
       # Customize the amount of memory on the VM:
       vb.memory = "1024"
       vb.cpus = 1
     end
 
-    dev.vm.network "private_network", ip: "192.168.33.200"
+    support.vm.network "private_network", ip: "192.168.33.100"
 
-    dev.vm.provision :docker
-    dev.vm.provision :docker_compose, yml: "/vagrant/docker.yml", rebuild: true
+    support.vm.provision :docker
+    support.vm.provision :docker_compose, yml: "/vagrant/docker-support.yml"
+
   end
+
+
 
 end

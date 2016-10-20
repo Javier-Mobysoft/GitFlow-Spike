@@ -105,15 +105,15 @@
 					<uniqueVersion>true</uniqueVersion>
 					<id>snapshotRepo</id>
 					<name>Snapshot Local Nexus</name>
-					<url>http://192.168.33.100:8081/nexus/content/repositories/snapshots</url>
-					<layout>http://192.168.33.100:8081/nexus/content/repositories/snapshots</layout>
+					<url>http://192.168.33.200:8091/nexus/content/repositories/snapshots</url>
+					<layout>http://192.168.33.200:8091/nexus/content/repositories/snapshots</layout>
 				</snapshotRepository>
 				<repository>
 					<uniqueVersion>false</uniqueVersion>
 					<id>releaseRepo</id>
 					<name>Release Local Nexus</name>
-					<url>http://192.168.33.100:8081/nexus/content/repositories/releases</url>
-					<layout>http://192.168.33.100:8081/nexus/content/repositories/releases</layout>
+					<url>http://192.168.33.200:8091/nexus/content/repositories/releases</url>
+					<layout>http://192.168.33.200:8091/nexus/content/repositories/releases</layout>
 				</repository>
 			</distributionManagement>
 		</profile>
@@ -127,8 +127,8 @@
 					<uniqueVersion>true</uniqueVersion>
 					<id>snapshotRepo</id>
 					<name>Snapshot Local Nexus</name>
-					<url>http://192.168.33.100:8081/nexus/content/repositories/mobysoft-snapshots</url>
-					<layout>http://192.168.33.100:8081/nexus/content/repositories/mobysoft-snapshots</layout>
+					<url>http://192.168.33.200:8091/nexus/content/repositories/mobysoft-snapshots</url>
+					<layout>http://192.168.33.200:8091/nexus/content/repositories/mobysoft-snapshots</layout>
 				</repository>
 			</distributionManagement>
 		</profile>

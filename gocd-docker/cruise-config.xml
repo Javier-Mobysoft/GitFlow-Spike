@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="utf-8"?>
+<cruise xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="cruise-config.xsd" schemaVersion="84">
+  <server artifactsdir="artifacts" agentAutoRegisterKey="123456789abcdef" commandRepositoryLocation="default" serverId="ae26c57d-a7e5-4c69-bd7a-b40cbd693e03" />
+  <pipelines group="Production">
+    <pipeline name="GITFLOW-SPIKE" labeltemplate="GITFLOW-SPIKE.${COUNT}" isLocked="false" template="release">
+      <params>
+        <param name="BRANCH_ENV" />
+      </params>
+      <environmentvariables>
+        <variable name="BRANCH_ENV">
+          <value />
+        </variable>
+      </environmentvariables>
+      <materials>
+        <git url="https://Javier-Mobysoft:6091jb00@github.com/Javier-Mobysoft/GitFlow-Spike.git" />
+      </materials>
+    </pipeline>
+    <pipeline name="GITFLOW-SPIKE-Deploy" labeltemplate="${GITFLOW-SPIKE}" isLocked="false" template="deploy-manual">
+      <params>
+        <param name="upstream">GITFLOW-SPIKE</param>
+        <param name="tomcat.host">192.168.33.200</param>
+        <param name="tomcat.port">8080</param>
+      </params>
+      <materials>
+        <pipeline pipelineName="GITFLOW-SPIKE" stageName="Release" />
+      </materials>
+    </pipeline>
+  </pipelines>
+  <pipelines group="Stage">
+    <pipeline name="GITFLOW-Stage" labeltemplate="GITFLOW-#{BRANCH_ENV}.${COUNT}" isLocked="false" template="build">
+      <params>
+        <param name="BRANCH_ENV">Stage</param>
+      </params>
+      <environmentvariables>
+        <variable name="BRANCH_ENV">
+          <value>Stage-</value>
+        </variable>
+      </environmentvariables>
+      <materials>
+        <git url="https://Javier-Mobysoft:6091jb00@github.com/Javier-Mobysoft/GitFlow-Spike.git" branch="stage" />
+      </materials>
+    </pipeline>
+    <pipeline name="GITFLOW-Stage-Deploy" labeltemplate="${GITFLOW-Stage}" isLocked="false" template="deploy">
+      <params>
+        <param name="upstream">GITFLOW-Stage</param>
+        <param name="tomcat.host">192.168.33.200</param>
+        <param name="tomcat.port">8081</param>
+      </params>
+      <materials>
+        <pipeline pipelineName="GITFLOW-Stage" stageName="Build" materialName="GITFLOW-Stage" />
+      </materials>
+    </pipeline>
+    <pipeline name="GITFLOW-MERGE-STAGE" labeltemplate="${GITFLOW-Stage}" isLocked="false" template="merge">
+      <params>
+        <param name="branch">stage</param>
+        <param name="upstream">GITFLOW-Stage</param>
+      </params>
+      <materials>
+        <git url="https://Javier-Mobysoft:6091jb00@github.com/Javier-Mobysoft/GitFlow-Spike.git" />
+        <pipeline pipelineName="GITFLOW-Stage" stageName="Build" />
+      </materials>
+    </pipeline>
+  </pipelines>
+  <pipelines group="Dev">
+    <pipeline name="GITFLOW-Dev" labeltemplate="GITFLOW-#{BRANCH_ENV}.${COUNT}" isLocked="false" template="build">
+      <params>
+        <param name="BRANCH_ENV">Dev</param>
+      </params>
+      <environmentvariables>
+        <variable name="BRANCH_ENV">
+          <value>Dev-</value>
+        </variable>
+      </environmentvariables>
+      <materials>
+        <git url="https://Javier-Mobysoft:6091jb00@github.com/Javier-Mobysoft/GitFlow-Spike.git" branch="develop" />
+      </materials>
+    </pipeline>
+    <pipeline name="GITFLOW-Dev-Deploy" labeltemplate="${GITFLOW-Dev}" isLocked="false" template="deploy">
+      <params>
+        <param name="upstream">GITFLOW-Dev</param>
+        <param name="tomcat.host">192.168.33.200</param>
+        <param name="tomcat.port">8082</param>
+      </params>
+      <materials>
+        <pipeline pipelineName="GITFLOW-Dev" stageName="Build" materialName="GITFLOW-Dev" />
+      </materials>
+    </pipeline>
+    <pipeline name="GITFLOW-MERGE-DEV" labeltemplate="${GITFLOW-Dev}" isLocked="false" template="merge">
+      <params>
+        <param name="branch">develop</param>
+        <param name="upstream">GITFLOW-Dev</param>
+      </params>
+      <materials>
+        <git url="https://Javier-Mobysoft:6091jb00@github.com/Javier-Mobysoft/GitFlow-Spike.git" branch="stage" />
+        <pipeline pipelineName="GITFLOW-Dev" stageName="Build" />
+      </materials>
+    </pipeline>
+  </pipelines>
+  <templates>
+    <pipeline name="build">
+      <stage name="Build" cleanWorkingDir="true">
+        <jobs>
+          <job name="Build">
+            <tasks>
+              <exec command="./scripts/versioning.sh">
+                <runif status="passed" />
+              </exec>
+              <exec command="mvn">
+                <arg>clean</arg>
+                <arg>deploy</arg>
+                <runif status="passed" />
+              </exec>
+              <exec command="/bin/bash">
+                <arg>-c</arg>
+                <arg>cp target/demo-*.war target/demo.war</arg>
+                <runif status="passed" />
+              </exec>
+              <exec command="/bin/bash">
+                <arg>-c</arg>
+                <arg>cp target/demo-*-javadoc.jar target/demo-javadoc.jar</arg>
+                <runif status="passed" />
+              </exec>
+              <exec command="/bin/bash">
+                <arg>-c</arg>
+                <arg>cp target/demo-*-sources.jar target/demo-sources.jar</arg>
+                <runif status="passed" />
+              </exec>
+              <exec command="/bin/bash">
+                <arg>-c</arg>
+                <arg>echo ${GO_PIPELINE_LABEL} &gt; incremental_version.txt</arg>
+                <runif status="passed" />
+              </exec>
+            </tasks>
+            <artifacts>
+              <artifact src="target/demo.war" />
+              <artifact src="pom.xml" />
+              <artifact src="scripts/promote.sh" />
+              <artifact src="target/demo-javadoc.jar" />
+              <artifact src="target/demo-sources.jar" />
+              <artifact src="incremental_version.txt" />
+            </artifacts>
+          </job>
+        </jobs>
+      </stage>
+    </pipeline>
+    <pipeline name="deploy">
+      <stage name="Deploy">
+        <jobs>
+          <job name="Fecth_Artifacts">
+            <tasks>
+              <fetchartifact pipeline="#{upstream}" stage="Build" job="Build" srcfile="pom.xml">
+                <runif status="passed" />
+              </fetchartifact>
+              <fetchartifact pipeline="#{upstream}" stage="Build" job="Build" srcfile="demo.war">
+                <runif status="passed" />
+              </fetchartifact>
+            </tasks>
+          </job>
+          <job name="Deploy_App">
+            <tasks>
+              <exec command="mvn">
+                <arg>tomcat7:undeploy</arg>
+                <arg>-Dmaven.tomcat.url=http://#{tomcat.host}:#{tomcat.port}/manager/text</arg>
+                <runif status="passed" />
+              </exec>
+              <exec command="mvn">
+                <arg>tomcat7:deploy-only</arg>
+                <arg>-Dmaven.tomcat.url=http://#{tomcat.host}:#{tomcat.port}/manager/text</arg>
+                <arg>-DwarFile=demo.war</arg>
+                <runif status="passed" />
+              </exec>
+            </tasks>
+          </job>
+        </jobs>
+      </stage>
+    </pipeline>
+    <pipeline name="deploy-manual">
+      <stage name="Deploy-Manual">
+        <approval type="manual" />
+        <jobs>
+          <job name="Deploy_App">
+            <tasks>
+              <fetchartifact pipeline="#{upstream}" stage="Release" job="Release" srcfile="pom.xml">
+                <runif status="passed" />
+              </fetchartifact>
+              <fetchartifact pipeline="#{upstream}" stage="Release" job="Release" srcfile="demo.war">
+                <runif status="passed" />
+              </fetchartifact>
+              <exec command="mvn">
+                <arg>tomcat7:undeploy</arg>
+                <arg>-Dmaven.tomcat.url=http://#{tomcat.host}:#{tomcat.port}/manager/text</arg>
+                <runif status="passed" />
+              </exec>
+              <exec command="mvn">
+                <arg>tomcat7:deploy</arg>
+                <arg>-Dmaven.tomcat.url=http://#{tomcat.host}:#{tomcat.port}/manager/text</arg>
+                <arg>-DwarFile=demo.war</arg>
+                <runif status="passed" />
+              </exec>
+            </tasks>
+          </job>
+        </jobs>
+      </stage>
+    </pipeline>
+    <pipeline name="merge">
+      <stage name="Merge" cleanWorkingDir="true">
+        <approval type="manual" />
+        <jobs>
+          <job name="Merge">
+            <tasks>
+              <exec command="git">
+                <arg>merge</arg>
+                <arg>origin/#{branch}</arg>
+                <runif status="passed" />
+              </exec>
+              <exec command="git">
+                <arg>push</arg>
+                <runif status="passed" />
+              </exec>
+              <fetchartifact pipeline="#{upstream}" stage="Build" job="Build" srcfile="incremental_version.txt">
+                <runif status="passed" />
+              </fetchartifact>
+            </tasks>
+          </job>
+        </jobs>
+      </stage>
+    </pipeline>
+    <pipeline name="Promote">
+      <stage name="Promote">
+        <jobs>
+          <job name="Promote">
+            <tasks>
+              <fetchartifact pipeline="#{upstream}" stage="Build" job="Build" srcfile="demo.war">
+                <runif status="passed" />
+              </fetchartifact>
+              <fetchartifact pipeline="#{upstream}" stage="Build" job="Build" srcfile="pom.xml">
+                <runif status="passed" />
+              </fetchartifact>
+              <fetchartifact pipeline="#{upstream}" stage="Build" job="Build" srcfile="promote.sh">
+                <runif status="passed" />
+              </fetchartifact>
+              <fetchartifact pipeline="#{upstream}" stage="Build" job="Build" srcfile="demo-javadoc.jar">
+                <runif status="passed" />
+              </fetchartifact>
+              <fetchartifact pipeline="#{upstream}" stage="Build" job="Build" srcfile="demo-sources.jar">
+                <runif status="passed" />
+              </fetchartifact>
+              <exec command="/bin/bash">
+                <arg>-c</arg>
+                <arg>chmod u+x promote.sh</arg>
+                <runif status="passed" />
+              </exec>
+              <exec command="./promote.sh">
+                <runif status="passed" />
+              </exec>
+            </tasks>
+          </job>
+        </jobs>
+      </stage>
+    </pipeline>
+    <pipeline name="release">
+      <stage name="Release" cleanWorkingDir="true">
+        <jobs>
+          <job name="Release">
+            <tasks>
+              <exec command="./scripts/versioning.sh">
+                <runif status="passed" />
+              </exec>
+              <exec command="mvn">
+                <arg>-Preleases</arg>
+                <arg>clean</arg>
+                <arg>deploy</arg>
+                <runif status="passed" />
+              </exec>
+              <exec command="/bin/bash">
+                <arg>-c</arg>
+                <arg>cp target/demo-*.war target/demo.war</arg>
+                <runif status="passed" />
+              </exec>
+              <exec command="/bin/bash">
+                <arg>-c</arg>
+                <arg>cp target/demo-*-javadoc.jar target/demo-javadoc.jar</arg>
+                <runif status="passed" />
+              </exec>
+              <exec command="/bin/bash">
+                <arg>-c</arg>
+                <arg>cp target/demo-*-sources.jar target/demo-sources.jar</arg>
+                <runif status="passed" />
+              </exec>
+            </tasks>
+            <artifacts>
+              <artifact src="target/demo.war" />
+              <artifact src="pom.xml" />
+              <artifact src="target/demo-javadoc.jar" />
+              <artifact src="scripts/promote.sh" />
+              <artifact src="target/demo-sources.jar" />
+            </artifacts>
+          </job>
+        </jobs>
+      </stage>
+    </pipeline>
+  </templates>
+  <agents>
+    <agent hostname="62afd8eb50ca" ipaddress="172.17.0.7" uuid="0abc9a01-f56d-4191-bc71-1e0d3ea0664f">
+      <resources>
+        <resource>Java</resource>
+      </resources>
+    </agent>
+  </agents>
+</cruise>
+
