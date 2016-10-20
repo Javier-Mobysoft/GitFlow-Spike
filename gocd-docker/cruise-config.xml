@@ -27,7 +27,7 @@
     </pipeline>
   </pipelines>
   <pipelines group="Stage">
-    <pipeline name="GITFLOW-Stage" labeltemplate="GITFLOW-#{BRANCH_ENV}.${COUNT}" isLocked="false" template="build">
+    <pipeline name="GITFLOW-Stage" labeltemplate="GITFLOW-#{BRANCH_ENV}.${GIT[:7]}" isLocked="false" template="build">
       <params>
         <param name="BRANCH_ENV">Stage</param>
       </params>
@@ -37,7 +37,7 @@
         </variable>
       </environmentvariables>
       <materials>
-        <git url="https://Javier-Mobysoft:6091jb00@github.com/Javier-Mobysoft/GitFlow-Spike.git" branch="stage" />
+        <git url="https://Javier-Mobysoft:6091jb00@github.com/Javier-Mobysoft/GitFlow-Spike.git" branch="stage" materialName="GIT" />
       </materials>
     </pipeline>
     <pipeline name="GITFLOW-Stage-Deploy" labeltemplate="${GITFLOW-Stage}" isLocked="false" template="deploy">
@@ -62,7 +62,7 @@
     </pipeline>
   </pipelines>
   <pipelines group="Dev">
-    <pipeline name="GITFLOW-Dev" labeltemplate="GITFLOW-#{BRANCH_ENV}.${COUNT}" isLocked="false" template="build">
+    <pipeline name="GITFLOW-Dev" labeltemplate="GITFLOW-#{BRANCH_ENV}.${GIT[:7]}" isLocked="false" template="build">
       <params>
         <param name="BRANCH_ENV">Dev</param>
       </params>
@@ -72,7 +72,7 @@
         </variable>
       </environmentvariables>
       <materials>
-        <git url="https://Javier-Mobysoft:6091jb00@github.com/Javier-Mobysoft/GitFlow-Spike.git" branch="develop" />
+        <git url="https://Javier-Mobysoft:6091jb00@github.com/Javier-Mobysoft/GitFlow-Spike.git" branch="develop" materialName="GIT" />
       </materials>
     </pipeline>
     <pipeline name="GITFLOW-Dev-Deploy" labeltemplate="${GITFLOW-Dev}" isLocked="false" template="deploy">
@@ -301,7 +301,7 @@
     </pipeline>
   </templates>
   <agents>
-    <agent hostname="62afd8eb50ca" ipaddress="172.17.0.7" uuid="0abc9a01-f56d-4191-bc71-1e0d3ea0664f">
+    <agent hostname="62afd8eb50ca" ipaddress="172.17.0.6" uuid="0abc9a01-f56d-4191-bc71-1e0d3ea0664f">
       <resources>
         <resource>Java</resource>
       </resources>
