@@ -4,8 +4,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Properties;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
@@ -15,6 +17,7 @@ import java.util.jar.Manifest;
 @RestController
 public class HealthCheck {
 
+    private Properties prop;
 
     @RequestMapping("/healthcheck")
     public HealthCheckBean check() {
@@ -36,15 +39,15 @@ public class HealthCheck {
     }
 
     private String getVersion()  {
-        try {
-            Manifest manifest = new Manifest(HealthCheck.class.getResourceAsStream("/META-INF/MANIFEST.MF"));
-            if(manifest==null) return "";
-
-            return manifest
-                    .getMainAttributes()
-                    .get(Attributes.Name.IMPLEMENTATION_VERSION).toString();
-        } catch (IOException e) {
-            return "";
+        if(prop==null) {
+            InputStream resourceAsStream = this.getClass().getResourceAsStream("/META-INF/maven/com.gitflow.spike/demo/pom.properties");
+            Properties prop = new Properties();
+            try {
+                prop.load(resourceAsStream);
+            } catch (IOException e) {
+                return "";
+            }
         }
+        return prop.getProperty("version");
     }
 }
