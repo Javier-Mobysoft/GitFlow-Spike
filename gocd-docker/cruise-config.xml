@@ -2,17 +2,12 @@
 <cruise xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="cruise-config.xsd" schemaVersion="84">
   <server artifactsdir="artifacts" agentAutoRegisterKey="123456789abcdef" commandRepositoryLocation="default" serverId="ae26c57d-a7e5-4c69-bd7a-b40cbd693e03" />
   <pipelines group="Production">
-    <pipeline name="GITFLOW-SPIKE" labeltemplate="GITFLOW-SPIKE.${COUNT}" isLocked="false" template="release">
+    <pipeline name="GITFLOW-SPIKE" labeltemplate="GITFLOW-SPIKE.${GIT[:7]}" isLocked="false" template="release">
       <params>
         <param name="BRANCH_ENV" />
       </params>
-      <environmentvariables>
-        <variable name="BRANCH_ENV">
-          <value />
-        </variable>
-      </environmentvariables>
       <materials>
-        <git url="https://Javier-Mobysoft:6091jb00@github.com/Javier-Mobysoft/GitFlow-Spike.git" />
+        <git url="https://Javier-Mobysoft:6091jb00@github.com/Javier-Mobysoft/GitFlow-Spike.git" materialName="GIT" />
       </materials>
     </pipeline>
     <pipeline name="GITFLOW-SPIKE-Deploy" labeltemplate="${GITFLOW-SPIKE}" isLocked="false" template="deploy-manual">
@@ -66,11 +61,6 @@
       <params>
         <param name="BRANCH_ENV">Dev</param>
       </params>
-      <environmentvariables>
-        <variable name="BRANCH_ENV">
-          <value>Dev-</value>
-        </variable>
-      </environmentvariables>
       <materials>
         <git url="https://Javier-Mobysoft:6091jb00@github.com/Javier-Mobysoft/GitFlow-Spike.git" branch="develop" materialName="GIT" />
       </materials>
@@ -125,19 +115,12 @@
                 <arg>cp target/demo-*-sources.jar target/demo-sources.jar</arg>
                 <runif status="passed" />
               </exec>
-              <exec command="/bin/bash">
-                <arg>-c</arg>
-                <arg>echo ${GO_PIPELINE_LABEL} &gt; incremental_version.txt</arg>
-                <runif status="passed" />
-              </exec>
             </tasks>
             <artifacts>
               <artifact src="target/demo.war" />
               <artifact src="pom.xml" />
-              <artifact src="scripts/promote.sh" />
               <artifact src="target/demo-javadoc.jar" />
               <artifact src="target/demo-sources.jar" />
-              <artifact src="incremental_version.txt" />
             </artifacts>
           </job>
         </jobs>
@@ -263,11 +246,10 @@
         <jobs>
           <job name="Release">
             <tasks>
-              <exec command="./scripts/versioning.sh">
+              <exec command="./scripts/promote.sh">
                 <runif status="passed" />
               </exec>
               <exec command="mvn">
-                <arg>-Preleases</arg>
                 <arg>clean</arg>
                 <arg>deploy</arg>
                 <runif status="passed" />
