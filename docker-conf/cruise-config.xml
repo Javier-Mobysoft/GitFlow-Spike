@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<cruise xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="cruise-config.xsd" schemaVersion="84">
+<cruise xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="cruise-config.xsd" schemaVersion="87">
   <server artifactsdir="artifacts" agentAutoRegisterKey="123456789abcdef" commandRepositoryLocation="default" serverId="ae26c57d-a7e5-4c69-bd7a-b40cbd693e03" />
   <pipelines group="Production">
-    <pipeline name="GITFLOW-SPIKE" labeltemplate="GITFLOW-SPIKE.${GIT[:7]}" isLocked="false" template="release">
+    <pipeline name="GITFLOW-SPIKE" labeltemplate="GITFLOW-SPIKE.${COUNT}.${GIT[:7]}" isLocked="false" template="release">
       <params>
         <param name="BRANCH_ENV" />
       </params>
@@ -20,9 +20,29 @@
         <pipeline pipelineName="GITFLOW-SPIKE" stageName="Release" />
       </materials>
     </pipeline>
+    <pipeline name="Spike-Common" labeltemplate="Spike-Common.${COUNT}.${GIT[:7]}" isLocked="false" template="Promote">
+      <materials>
+        <git url="https://github.com/Javier-Mobysoft/Spike-Common.git" materialName="GIT" />
+      </materials>
+    </pipeline>
+    <pipeline name="Spike-Project1" labeltemplate="Spike-Project1.${COUNT}.${GIT[:7]}" isLocked="false" template="Promote">
+      <materials>
+        <git url="https://github.com/Javier-Mobysoft/Spike-Project1.git" materialName="GIT" />
+      </materials>
+    </pipeline>
+    <pipeline name="Spike-Project2" labeltemplate="Spike-Project2.${COUNT}.${GIT[:7]}" isLocked="false" template="Promote">
+      <materials>
+        <git url="https://github.com/Javier-Mobysoft/Spike-Project2.git" materialName="GIT" />
+      </materials>
+    </pipeline>
+    <pipeline name="Spike-Project3" labeltemplate="Spike-Project3.${COUNT}.${GIT[:7]}" isLocked="false" template="Promote">
+      <materials>
+        <git url="https://github.com/Javier-Mobysoft/Spike-Project3.git" materialName="GIT" />
+      </materials>
+    </pipeline>
   </pipelines>
   <pipelines group="Stage">
-    <pipeline name="GITFLOW-Stage" labeltemplate="GITFLOW-#{BRANCH_ENV}.${GIT[:7]}" isLocked="false" template="build">
+    <pipeline name="GITFLOW-Stage" labeltemplate="GITFLOW-#{BRANCH_ENV}.${COUNT}.${GIT[:7]}" isLocked="false" template="build">
       <params>
         <param name="BRANCH_ENV">Stage</param>
       </params>
@@ -55,9 +75,14 @@
         <pipeline pipelineName="GITFLOW-Stage" stageName="Build" />
       </materials>
     </pipeline>
+    <pipeline name="Spike-Common-Stage" labeltemplate="Spike-Common-Stage.${COUNT}.${GIT[:7]}" isLocked="false" template="Versioning">
+      <materials>
+        <git url="https://github.com/Javier-Mobysoft/Spike-Common.git" branch="stage" materialName="GIT" />
+      </materials>
+    </pipeline>
   </pipelines>
   <pipelines group="Dev">
-    <pipeline name="GITFLOW-Dev" labeltemplate="GITFLOW-#{BRANCH_ENV}.${GIT[:7]}" isLocked="false" template="build">
+    <pipeline name="GITFLOW-Dev" labeltemplate="GITFLOW-#{BRANCH_ENV}.${COUNT}.${GIT[:7]}" isLocked="false" template="build">
       <params>
         <param name="BRANCH_ENV">Dev</param>
       </params>
@@ -83,6 +108,18 @@
       <materials>
         <git url="https://Javier-Mobysoft:6091jb00@github.com/Javier-Mobysoft/GitFlow-Spike.git" branch="stage" />
         <pipeline pipelineName="GITFLOW-Dev" stageName="Build" />
+      </materials>
+    </pipeline>
+    <pipeline name="Spike-Common-Dev" labeltemplate="Spike-Common-Dev.${COUNT}.${GIT[:7]}" isLocked="false" template="Versioning">
+      <materials>
+        <git url="https://github.com/Javier-Mobysoft/Spike-Common.git" branch="develop" materialName="GIT" />
+      </materials>
+    </pipeline>
+  </pipelines>
+  <pipelines group="Others">
+    <pipeline name="Spike-Parent" labeltemplate="Spike-Parent.${COUNT}.${GIT[:7]}" isLocked="false" template="Promote-Parent">
+      <materials>
+        <git url="https://github.com/Javier-Mobysoft/Spike-Parent.git" materialName="GIT" />
       </materials>
     </pipeline>
   </pipelines>
@@ -219,27 +256,35 @@
         <jobs>
           <job name="Promote">
             <tasks>
-              <fetchartifact pipeline="#{upstream}" stage="Build" job="Build" srcfile="demo.war">
-                <runif status="passed" />
-              </fetchartifact>
-              <fetchartifact pipeline="#{upstream}" stage="Build" job="Build" srcfile="pom.xml">
-                <runif status="passed" />
-              </fetchartifact>
-              <fetchartifact pipeline="#{upstream}" stage="Build" job="Build" srcfile="promote.sh">
-                <runif status="passed" />
-              </fetchartifact>
-              <fetchartifact pipeline="#{upstream}" stage="Build" job="Build" srcfile="demo-javadoc.jar">
-                <runif status="passed" />
-              </fetchartifact>
-              <fetchartifact pipeline="#{upstream}" stage="Build" job="Build" srcfile="demo-sources.jar">
-                <runif status="passed" />
-              </fetchartifact>
-              <exec command="/bin/bash">
-                <arg>-c</arg>
-                <arg>chmod u+x promote.sh</arg>
+              <exec command="./scripts/promote.sh">
                 <runif status="passed" />
               </exec>
-              <exec command="./promote.sh">
+              <exec command="mvn">
+                <arg>clean</arg>
+                <arg>deploy</arg>
+                <runif status="passed" />
+              </exec>
+            </tasks>
+          </job>
+        </jobs>
+      </stage>
+    </pipeline>
+    <pipeline name="Promote-Parent">
+      <stage name="Promote">
+        <jobs>
+          <job name="Promote">
+            <tasks>
+              <exec command="mvn">
+                <arg>clean</arg>
+                <arg>deploy</arg>
+                <runif status="passed" />
+              </exec>
+              <exec command="./scripts/promote-parent.sh">
+                <runif status="passed" />
+              </exec>
+              <exec command="mvn">
+                <arg>clean</arg>
+                <arg>deploy</arg>
                 <runif status="passed" />
               </exec>
             </tasks>
@@ -283,6 +328,24 @@
               <artifact src="scripts/promote.sh" />
               <artifact src="target/demo-sources.jar" />
             </artifacts>
+          </job>
+        </jobs>
+      </stage>
+    </pipeline>
+    <pipeline name="Versioning">
+      <stage name="Versioning">
+        <jobs>
+          <job name="Versioning">
+            <tasks>
+              <exec command="./scripts/versioning.sh">
+                <runif status="passed" />
+              </exec>
+              <exec command="mvn">
+                <arg>clean</arg>
+                <arg>deploy</arg>
+                <runif status="passed" />
+              </exec>
+            </tasks>
           </job>
         </jobs>
       </stage>
